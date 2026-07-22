@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hololive Dreams - ルーム募集サイト</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="root">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-inner">
+        <div class="header-left">
+          <a href="#" class="header-logo">
+            <div class="logo-icon"></div>
+            <span>hololive Dreams</span>
+          </a>
+          <div class="header-stats">
+            <div class="stat-item">👥 <span class="stat-number" id="stat-users">38</span> 人利用中</div>
+            <div class="stat-item">🎮 <span class="stat-number" id="stat-rooms">12</span> 部屋募集中</div>
+            <div class="stat-item">🙋 <span class="stat-number" id="stat-access">3401</span> 歴代アクセス</div>
+          </div>
+        </div>
+        <div class="header-nav">
+          <button type="button" class="nav-btn" onclick="scrollToAbout()">募集</button>
+          <div class="lang-buttons">
+            <button type="button" class="lang-btn active" onclick="setLanguage('JP', this)">JP</button>
+            <button type="button" class="lang-btn" onclick="setLanguage('EN', this)">EN</button>
+          </div>
+          <button type="button" class="theme-toggle" onclick="toggleDarkMode()" title="ダークモード">🌙</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+      <!-- Room Matching Header -->
+      <div style="margin-bottom: 2rem; padding: 1.5rem 0; text-align: center;">
+        <h1 class="page-title" style="font-size: 2.5rem; margin-bottom: 0.5rem;">Room Matching</h1>
+        <p class="page-subtitle">好みの募集を見つけて、一緒にhololive Dreamsを楽しもう</p>
+      </div>
+
+      <!-- About Section -->
+      <div class="about-section" id="about">
+        <div class="about-title">📌 このサイトについて</div>
+        <div class="about-text">
+          ホロドリ Dreams 内には「ワールドマッチ」「プライベートルーム」がありますが、このサイトは「目的ごとに人を集める」機能を補うために作られました。アカウント作成やログイン不要で、誰でもすぐに募集・参加できます。
+        </div>
+      </div>
+
+      <!-- Latest Rooms Section (Compact) -->
+      <div class="latest-section" style="padding: 1rem; margin-bottom: 2rem;">
+        <div class="latest-title" style="margin-bottom: 0.75rem;"> ✨ 新着募集</div>
+        <div class="latest-list" id="latest-list" style="gap: 0.75rem;"></div>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="filter-section">
+        <label class="filter-label">📂 募集カテゴリ</label>
+        <div class="filter-chips">
+          <button type="button" class="chip active" onclick="filterCategory(this, 'すべて')">すべて</button>
+          <button type="button" class="chip" onclick="filterCategory(this, '周回')">周回</button>
+          <button type="button" class="chip" onclick="filterCategory(this, '初心者歓迎')">初心者歓迎</button>
+          <button type="button" class="chip" onclick="filterCategory(this, '遊び')">遊び</button>
+          <button type="button" class="chip" onclick="filterCategory(this, '写真撮影')">写真撮影</button>
+          <button type="button" class="chip" onclick="filterCategory(this, '鍵付き部屋')">鍵付き部屋</button>
+          <button type="button" class="chip" onclick="filterCategory(this, 'その他')">その他</button>
+        </div>
+      </div>
+
+      <!-- Rooms Section -->
+      <div class="rooms-section">
+        <div class="rooms-title" id="rooms-title">募集中の部屋</div>
+        <div class="rooms-grid" id="rooms-grid"></div>
+      </div>
+
+      <!-- Support Section -->
+      <div class="support-section">
+        <div class="support-title">📮 お問い合わせ・サポート</div>
+        <div class="support-content">
+          <div class="support-item">
+            <div class="support-item-title">✉️ お問い合わせフォーム</div>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdCoi5ZcugSKDHrwX3G4DcE1i-Psj6AuEZvRaULjtxXrNpJVA/viewform?usp=publish-editor">お問い合わせ</a>
+          </div>
+          <div class="support-item">
+            <div class="support-item-title">𝕏 (Twitter)</div>
+            <a href="https://x.com/kaede_tech">開発者アカウント</a>
+          </div>
+        </div>
+
+        <div class="support-title" style="margin-top: 1.5rem;">利用規約</div>
+        <div class="terms-content">
+          <h3>1. 本サイトの性質について(非公式ファンメイド)</h3>
+          <p>本サイト(以下、「当サイト」といいます)は、COVER corporation(カバー株式会社)が開発・運営する公式ゲーム『ホロライブ Dreams』のプレイヤー有志によって制作・運営されている、非公式のファンメイドコミュニティツールです。当サイトは、カバー株式会社、ホロライブ、および『ホロライブ Dreams』の公式運営とは一切の協力・提携関係にありません。</p>
+
+          <h3>2. 著作権および知的財産権について</h3>
+          <p>当サイトはファンコミュニティによる二次創作活動の一環として運営されています。当サイト内において、カバー株式会社が権利を有する知的財産(公式ロゴ、キャラクターイラスト、ゲーム内画像などの著作物)は一切使用しておりません。当サイトに掲載されている商標やタイトル等の固有名詞は、利便性および識別性の向上のためにのみ引用しており、それらの権利はすべてカバー株式会社またはその権利者に帰属します。</p>
+
+          <h3>3. チャット機能およびコミュニケーションに関する規定</h3>
+          <p>当サイトが提供するチャット機能およびメッセージ投稿機能(以下、「本機能」といいます)の利用に際し、利用者は以下の事項に同意したものとみなします。</p>
+          <ul>
+            <li><strong>自己責任の原則:</strong>チャット内での発言や情報のやり取りは、すべて投稿した利用者自身の責任において行われるものとします。</li>
+            <li><strong>禁止事項:</strong>他者への誹謗中傷、荒らし行為、公序良俗に反する発言、公式企業や第三者の権利を侵害する行為、営業活動、その他管理者が不適切と判断した投稿は一切禁止します。</li>
+            <li><strong>管理者の権限:</strong>禁止事項に触れる投稿や、サイトの健全な運営を妨げる恐れのあるメッセージが発見された場合、管理者は事前の通知なく、当該投稿の削除や該当ユーザーのアクセス制限(アク禁等)を行う権利を有します。</li>
+          </ul>
+
+          <h3>4. 免責事項(責任の制限)</h3>
+          <p>当サイトの利用は、すべて利用者の皆様の自己責任において行われるものとします。チャット機能を含め、当サイトに掲載・投稿された情報の正確性や安全性を保証するものではありません。当サイトの利用、またはチャット機能を通じて発生した利用者同士のトラブル、紛争、およびそれに起因するいかなる損害についても、当サイトの管理者は一切の責任を負わず、仲裁や解決の義務も負いません。</p>
+
+          <h3>5. 運営の停止・中断・終了について</h3>
+          <p>当サイトは、個人またはファンコミュニティによって無償で提供・管理されているツールです。そのため、サーバーの負荷、メンテナンス、その他の理由により、事前の予告なくいつでもサイトおよびチャット機能の内容を変更、一時中断、または完全にサービスを終了(閉鎖)する場合があります。これに伴い利用者に生じた不利益や損害についても、当サイト管理者は一切の補償や対応を行いません。</p>
+
+          <h3>6. 公式企業へのお問い合わせ禁止</h3>
+          <p>当サイトの機能、動作、不具合、またはチャット内でのトラブルに関するすべての質問や苦情は、カバー株式会社や『ホロライブ Dreams』の公式サポート窓口へ絶対に問い合わせないでください。当サイトに関するお問い合わせは、必ず当サイト内に設置されている「お問い合わせフォーム」または公式X(旧Twitter)アカウントまでご連絡いただきますようお願い申し上げます。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-inner">
+        <p>&copy; 2024 hololive Dreams Community Tool. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Consent Modal -->
+  <div class="consent-overlay" id="consent-modal">
+    <div class="consent-modal">
+      <div class="consent-title">📋 利用規約への同意</div>
+      <div class="consent-content">
+        <h3>1. 本サイトの性質について(非公式ファンメイド)</h3>
+        <p>本サイト(以下、「当サイト」といいます)は、COVER corporation(カバー株式会社)が開発・運営する公式ゲーム『ホロライブ Dreams』のプレイヤー有志によって制作・運営されている、非公式のファンメイドコミュニティツールです。当サイトは、カバー株式会社、ホロライブ、および『ホロライブ Dreams』の公式運営とは一切の協力・提携関係にありません。</p>
+
+        <h3>2. 著作権および知的財産権について</h3>
+        <p>当サイトはファンコミュニティによる二次創作活動の一環として運営されています。当サイト内において、カバー株式会社が権利を有する知的財産(公式ロゴ、キャラクターイラスト、ゲーム内画像などの著作物)は一切使用しておりません。当サイトに掲載されている商標やタイトル等の固有名詞は、利便性および識別性の向上のためにのみ引用しており、それらの権利はすべてカバー株式会社またはその権利者に帰属します。</p>
+
+        <h3>3. チャット機能およびコミュニケーションに関する規定</h3>
+        <p>当サイトが提供するチャット機能およびメッセージ投稿機能(以下、「本機能」といいます)の利用に際し、利用者は以下の事項に同意したものとみなします。</p>
+        <ul>
+          <li><strong>自己責任の原則:</strong>チャット内での発言や情報のやり取りは、すべて投稿した利用者自身の責任において行われるものとします。</li>
+          <li><strong>禁止事項:</strong>他者への誹謗中傷、荒らし行為、公序良俗に反する発言、公式企業や第三者の権利を侵害する行為、営業活動、その他管理者が不適切と判断した投稿は一切禁止します。</li>
+          <li><strong>管理者の権限:</strong>禁止事項に触れる投稿や、サイトの健全な運営を妨げる恐れのあるメッセージが発見された場合、管理者は事前の通知なく、当該投稿の削除や該当ユーザーのアクセス制限(アク禁等)を行う権利を有します。</li>
+        </ul>
+
+        <h3>4. 免責事項(責任の制限)</h3>
+        <p>当サイトの利用は、すべて利用者の皆様の自己責任において行われるものとします。チャット機能を含め、当サイトに掲載・投稿された情報の正確性や安全性を保証するものではありません。当サイトの利用、またはチャット機能を通じて発生した利用者同士のトラブル、紛争、およびそれに起因するいかなる損害についても、当サイトの管理者は一切の責任を負わず、仲裁や解決の義務も負いません。</p>
+
+        <h3>5. 運営の停止・中断・終了について</h3>
+        <p>当サイトは、個人またはファンコミュニティによって無償で提供・管理されているツールです。そのため、サーバーの負荷、メンテナンス、その他の理由により、事前の予告なくいつでもサイトおよびチャット機能の内容を変更、一時中断、または完全にサービスを終了(閉鎖)する場合があります。これに伴い利用者に生じた不利益や損害についても、当サイト管理者は一切の補償や対応を行いません。</p>
+
+        <h3>6. 公式企業へのお問い合わせ禁止</h3>
+        <p>当サイトの機能、動作、不具合、またはチャット内でのトラブルに関するすべての質問や苦情は、カバー株式会社や『ホロライブ Dreams』の公式サポート窓口へ絶対に問い合わせないでください。当サイトに関するお問い合わせは、必ず当サイト内に設置されている「お問い合わせフォーム」または公式X(旧Twitter)アカウントまでご連絡いただきますようお願い申し上げます。</p>
+      </div>
+      <div class="consent-buttons">
+        <button type="button" class="consent-btn consent-btn-reject" onclick="rejectConsent()">利用しない</button>
+        <button type="button" class="consent-btn consent-btn-accept" onclick="acceptConsent()">同意して利用する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="confirmation-overlay" id="confirmation-modal">
+    <div class="confirmation-modal">
+      <div class="confirmation-title" id="confirmation-title">確認</div>
+      <div class="confirmation-text" id="confirmation-text">本当にこの操作を実行しますか？</div>
+      <div class="confirmation-buttons">
+        <button type="button" class="confirmation-btn confirmation-btn-cancel" onclick="cancelConfirmation()">キャンセル</button>
+        <button type="button" class="confirmation-btn confirmation-btn-confirm" id="confirmation-accept" onclick="confirmAction()">実行</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Room Modal -->
+  <div class="modal-overlay" id="create-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">部屋を作成</h2>
+        <button type="button" class="modal-close" onclick="closeModal('create-modal')">✕</button>
+      </div>
+      <form onsubmit="handleCreateRoom(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">ゲーム選択 <span class="required">*</span></label>
+            <select class="form-select" id="game-select" onchange="updateGameFields()" required>
+              <option value="">選択してください</option>
+              <option value="holodori">🎵 リズムゲーム(ホロドリ)</option>
+              <option value="megacircuit">🏎️ メガサーキット</option>
+              <option value="pokajan">♣ ポカジャン!</option>
+              <option value="hoppin">🪢 ホッピン·ロープ</option>
+              <option value="cookie">🍳 そろえてクッキング</option>
+              <option value="other">その他のゲーム</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="song-group" style="display: none;">
+            <label class="form-label">曲指定</label>
+            <input type="text" id="room-song" class="form-input" placeholder="曲名を入力">
+          </div>
+
+          <div class="form-group" id="room-name-group" style="display: none;">
+            <label class="form-label">部屋の名前</label>
+            <input type="text" id="room-name" class="form-input" placeholder="部屋の名前を入力">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">パスワード（4桁、任意）</label>
+            <input type="text" id="room-password" class="form-input" placeholder="数字4桁（例：1234）" maxlength="4" pattern="[0-9]*">
+            <small style="color: var(--black-75); font-size: 0.75rem; margin-top: 0.25rem; display: block;">パスワードを設定すると自動的に「鍵付き部屋」に設定されます</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">ホロドリのパスワード（任意）</label>
+            <input type="text" id="holodori-password" class="form-input" placeholder="ゲーム内のパスワードを入力">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">難易度レベル <span class="required">*</span></label>
+            <select class="form-select" id="room-level" required>
+              <option value="">選択してください</option>
+              <option value="初心者">初心者</option>
+              <option value="中級者">中級者</option>
+              <option value="上級者">上級者</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">滞在時間 <span class="required">*</span></label>
+            <select class="form-select" id="room-duration" required>
+              <option value="">選択してください</option>
+              <option value="5">5分</option>
+              <option value="15">15分</option>
+              <option value="30">30分</option>
+              <option value="60">1時間</option>
+              <option value="120">2時間以上</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">募集カテゴリ <span class="required">*</span></label>
+            <select class="form-select" id="category-select" required>
+              <option value="">選択してください</option>
+              <option value="周回">周回</option>
+              <option value="初心者歓迎">初心者歓迎</option>
+              <option value="ガチ勝負">ガチ勝負</option>
+              <option value="遊び">遊び</option>
+              <option value="写真撮影">写真撮影</option>
+              <option value="鍵付き部屋">鍵付き部屋</option>
+              <option value="その他">その他</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">募集人数</label>
+            <div class="capacity-counter">
+              <button type="button" class="counter-btn" onclick="decreaseCapacity(event)">−</button>
+              <input type="number" id="capacity-display" value="1" readonly min="1" max="5" class="capacity-input">
+              <button type="button" class="counter-btn" onclick="increaseCapacity(event)">+</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">コメント</label>
+            <textarea id="room-comment" class="form-textarea" placeholder="部屋についてのコメント..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">プレイヤー名 <span class="required">*</span></label>
+            <input type="text" id="user-name" class="form-input" placeholder="プレイヤー名を入力（最大20文字）" maxlength="20" required>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('create-modal')">キャンセル</button>
+            <button type="submit" class="btn btn-primary">作成</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Join Room Modal -->
+  <div class="modal-overlay" id="join-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">部屋に参加</h2>
+        <button type="button" class="modal-close" onclick="closeModal('join-modal')">✕</button>
+      </div>
+      <form onsubmit="handleJoinRoom(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">ゲーム</label>
+            <div class="form-input" id="join-game" style="background: var(--blue-10); display: flex; align-items: center;"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">部屋ID</label>
+            <div class="form-input" id="join-room-id" style="background: var(--blue-10); display: flex; align-items: center; font-family: monospace; font-weight: 600;"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">コメント</label>
+            <div class="form-input" id="join-comment" style="background: var(--blue-10); display: flex; align-items: center;"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">詳細情報</label>
+            <div class="form-input" id="join-song" style="background: var(--blue-10); display: flex; align-items: center;"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">難易度レベル</label>
+            <select class="form-select" id="difficulty-select">
+              <option value="">選択なし</option>
+              <option value="初心者">初心者</option>
+              <option value="中級者">中級者</option>
+              <option value="上級者">上級者</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">滞在時間 <span class="required">*</span></label>
+            <select class="form-select" id="join-duration" required>
+              <option value="">選択してください</option>
+              <option value="5">5分</option>
+              <option value="15">15分</option>
+              <option value="30">30分</option>
+              <option value="60">1時間</option>
+              <option value="120">2時間以上</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">プレイヤー名 <span class="required">*</span></label>
+            <input type="text" id="join-player-name" class="form-input" placeholder="プレイヤー名を入力（最大20文字）" maxlength="20" required>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('join-modal')">キャンセル</button>
+            <button type="submit" class="btn btn-primary">参加</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Chat Modal -->
+  <div class="modal-overlay" id="chat-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="chat-room-title">部屋チャット</h2>
+        <button type="button" class="modal-close" onclick="closeModal('chat-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="room-info-title">ホロドリ参加コード　ゲームに貼り付けてください</div>
+        <div class="room-code-input-group">
+          <input type="text" class="room-code-input" id="participation-code" value="12345678" readonly>
+          <button type="button" class="room-code-btn" onclick="copyParticipationCode()">コピー</button>
+        </div>
+
+        <div class="room-info-title">👥 参加メンバー</div>
+        <div class="member-list" id="member-list"></div>
+
+        <div class="chat-container" style="display: none;"></div>
+
+        <div class="form-actions" style="margin: 1rem 0 0 0;">
+          <button type="button" class="chat-exit-btn" onclick="closeModal('chat-modal')">部屋から退出</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
