@@ -66,15 +66,20 @@ function getGameLabel(gameType) {
   return labels[gameType] || '🎮 ゲーム';
 }
 
+// updateStats()関数内で、実際のデータに基づく統計を計算
 function updateStats() {
   const userCount = state.rooms.reduce((sum, room) => sum + room.members.length, 0);
   const roomCount = state.rooms.length;
   const accessKey = 'hololive-dreams-access-count';
-  const initialAccess = Number(localStorage.getItem(accessKey) || '3401');
+  
+  // 初回アクセス時にカウント開始（3401からでなく1から）
   if (!localStorage.getItem(accessKey)) {
-    localStorage.setItem(accessKey, String(initialAccess + 1));
+    localStorage.setItem(accessKey, '1');
   }
-  const accessCount = Number(localStorage.getItem(accessKey) || '3401');
+  const accessCount = Number(localStorage.getItem(accessKey) || '1');
+  
+  // ページ読み込み時にアクセス数を+1
+  localStorage.setItem(accessKey, String(accessCount + 1));
 
   const statUsers = $('#stat-users');
   const statRooms = $('#stat-rooms');
@@ -82,7 +87,7 @@ function updateStats() {
 
   if (statUsers) statUsers.textContent = String(userCount);
   if (statRooms) statRooms.textContent = String(roomCount);
-  if (statAccess) statAccess.textContent = String(accessCount);
+  if (statAccess) statAccess.textContent = String(Number(localStorage.getItem(accessKey)));
 }
 
 function renderLatestRooms() {
@@ -340,6 +345,7 @@ function createRoomFromForm(form) {
     time: 0,
     members: [{ name: playerName, level, stay: duration }],
     participationCode: generateParticipationCode(),
+    password: password ? btoa(password) : null,
   };
 }
 async function handleCreateRoom(event) {
@@ -399,10 +405,32 @@ async function handleJoinRoom(event) {
   const room = state.rooms.find((item) => item.id === state.pendingJoinRoomId);
   if (!room) return;
 
+  // 鍵付き部屋の場合、パスワード必須チェック
+  if (room.category === '鍵付き部屋') {
+    const password = $('#join-password', form)?.value.trim();
+    const roomPassword = room.password;
+    
+    if (!password) {
+      alert('このルームはパスワードが必要です');
+      return;
+    }
+
+const response = await fetch(`${API_BASE}/api/rooms/${room.id}/verify-password`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ password })
+});
+
+const result = await response.json();
+if (!result.valid) {
+  alert('パスワードが間違っています');
+  return;
+}
+  }
+
   const nickname = $('#join-player-name', form)?.value.trim() || '名無しさん';
   const level = $('#difficulty-select', form)?.value || room.difficulty || '中級者';
   const duration = Number($('#join-duration', form)?.value || '5');
-
   try {
     const response = await fetch(`${API_BASE}/api/rooms/${room.id}/join`, {
       method: 'POST',
@@ -652,8 +680,13 @@ function startAutoSync() {
     }
   }, 10000); // 30秒間隔
 }
-
 document.addEventListener('DOMContentLoaded', async () => {
+  // 利用規約に同意しているか確認
+  const consentAccepted = localStorage.getItem('consentAccepted') === 'true';
+  if (!consentAccepted) {
+    showConsentModal();
+  }
+
   try {
     await loadRooms();
     startAutoSync();
