@@ -1,4 +1,4 @@
-const API_BASE = 'https://hololive-dreams-backend.maple-live12201484.workers.dev/';
+const API_BASE = 'https://hololive-dreams-backend.maple-live12201484.workers.dev';
 
 const mockRooms = [
   {
