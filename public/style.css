@@ -1,4 +1,4 @@
- * {
+* {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
@@ -153,14 +153,20 @@
 
     /* ==================== Header ==================== */
     .header {
-      background: var(--white-100);
-      border-bottom: 1px solid var(--black-15);
-      padding: 0.75rem clamp(16px, 5%, 40px);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: rgba(24, 32, 3, 0.36) 0px 1px 2px;
-    }
+    background: var(--white-100);
+    border-bottom: 1px solid var(--black-15);
+    padding: 0 clamp(16px, 5%, 40px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: rgba(24, 32, 3, 0.36) 0px 1px 2px;
+        /* ▼ ここを追加 ▼ */
+    display: flex;
+    align-items: center;       /* 上下中央揃え */
+    justify-content: flex-start; /* 左寄せ */
+}
 
     .header-inner {
       max-width: min(95vw, 1200px);
@@ -173,34 +179,36 @@
     }
 
     .header-left {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: nowrap;
-      flex: 1;
-      min-width: 0;
-    }
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: nowrap;
+  min-width: 0;
+  margin-right: auto;
+}
 
     .header-logo {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      text-decoration: none;
-      font-weight: 900;
-      font-size: 2rem;
-      color: var(--black-100);
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: color 0.3s;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* ★これを追加して左詰めに決定する */
+    gap: 0.5rem;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 2rem;
+    color: var(--black-100);
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: color 0.3s;
+}
+
 
     .header-logo:hover {
       color: var(--blue-100);
     }
 
     .logo-icon {
-        width: 120px;
-        height: 120px;
+        width: 80px;
+        height: 80px;
       background: url('./icon.png') center/contain no-repeat;
       border-radius: 3rem;
       display: flex;
@@ -452,6 +460,44 @@
       color: var(--black-75);
       font-weight: 500;
       margin: 0.5rem 0;
+    }
+
+    .room-members-info {
+      background: var(--blue-5);
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin: 0.75rem 0;
+    }
+
+    .members-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--black-50);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .member-preview {
+      display: flex;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--black-75);
+      margin-bottom: 0.5rem;
+    }
+
+    .member-preview:last-child {
+      margin-bottom: 0;
+    }
+
+    .member-name {
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .member-level,
+    .member-stay {
+      color: var(--black-50);
+      white-space: nowrap;
     }
 
     .room-tags {
@@ -1204,3 +1250,98 @@
 
     /* ==================== Footer ==================== */
     
+
+  
+
+    /* ==================== Footer ==================== */
+
+.footer {
+  margin-top: 4rem;
+  padding: 2.5rem clamp(16px, 5%, 40px);
+  background: var(--white-100);
+  border-top: 1px solid var(--black-15);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.footer-inner {
+  max-width: min(95vw, 1200px);
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+}
+
+.footer-inner::before {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 3px;
+  margin: 0 auto 1.5rem;
+  background: var(--grd-normal);
+  border-radius: 999px;
+}
+
+.footer p {
+  margin: 0;
+  color: var(--black-75);
+  font-size: 0.875rem;
+  line-height: 1.8 !important;
+  font-weight: 500;
+}
+
+.footer strong {
+  display: inline-block;
+  margin: 0.4rem 0;
+  color: var(--black-100);
+  font-weight: 800;
+}
+
+/* ダークモード対応 */
+body.dark-mode .footer {
+  background: var(--white-100);
+  border-color: var(--black-15);
+}
+
+
+
+@media (max-width: 768px) {
+  .header-inner {
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .header-left {
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .header-logo {
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  .header-stats {
+    gap: 0.3rem 0.5rem;
+    padding-left: 0.5rem;
+    font-size: 0.65rem;
+    white-space: nowrap;
+  }
+
+  .header-nav {
+    gap: 0.3rem;
+    flex-shrink: 0;
+  }
+
+  .nav-btn,
+  .theme-toggle {
+    padding: 0.4rem 0.55rem;
+    font-size: 0.75rem;
+  }
+}

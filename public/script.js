@@ -1,93 +1,7 @@
 const API_BASE = 'https://hololive-dreams-backend.maple-live12201484.workers.dev';
 
-const mockRooms = [
-  {
-    id: 'ROOM1234',
-    game: '🎵 リズムゲーム',
-    gameType: 'holodori',
-    category: '周回',
-    roomName: '',
-    comment: '初心者です、御手柔らかに！',
-    song: 'メテオ EX',
-    capacity: 2,
-    difficulty: '初心者',
-    time: 5,
-    members: [
-      { name: 'あかり', level: '初心者', stay: 5 },
-      { name: 'プレイヤーA', level: '中級者', stay: 12 },
-    ],
-    participationCode: '12345678',
-  },
-  {
-    id: 'ROOM5678',
-    game: '🎵 リズムゲーム',
-    gameType: 'holodori',
-    category: '周回',
-    roomName: '',
-    comment: 'フルコン狙い',
-    song: '',
-    capacity: 4,
-    difficulty: '上級者',
-    time: 12,
-    members: [
-      { name: 'プレイヤーB', level: '上級者', stay: 8 },
-      { name: 'プレイヤーC', level: '上級者', stay: 16 },
-    ],
-    participationCode: '23456789',
-  },
-  {
-    id: 'ROOM9012',
-    game: '🎵 リズムゲーム',
-    gameType: 'holodori',
-    category: '初心者歓迎',
-    roomName: '',
-    comment: '1時間だけ！',
-    song: '',
-    capacity: 4,
-    difficulty: '初心者',
-    time: 3,
-    members: [
-      { name: 'プレイヤーD', level: '初心者', stay: 3 },
-    ],
-    participationCode: '34567890',
-  },
-  {
-    id: 'ROOM3456',
-    game: '🎵 リズムゲーム',
-    gameType: 'holodori',
-    category: '遊び',
-    roomName: '',
-    comment: '推し縛り募集',
-    song: '',
-    capacity: 3,
-    difficulty: '中級者',
-    time: 8,
-    members: [
-      { name: 'プレイヤーE', level: '中級者', stay: 6 },
-      { name: 'プレイヤーF', level: '中級者', stay: 9 },
-    ],
-    participationCode: '45678901',
-  },
-  {
-    id: 'ROOM7890',
-    game: '🎵 リズムゲーム',
-    gameType: 'holodori',
-    category: 'ガチ勝負',
-    roomName: '',
-    comment: 'スコアランキング挑戦！',
-    song: '',
-    capacity: 2,
-    difficulty: '上級者',
-    time: 1,
-    members: [
-      { name: 'プレイヤーG', level: '上級者', stay: 1 },
-    ],
-    participationCode: '56789012',
-  },
-];
-
 const state = {
-  rooms: mockRooms.slice(),
+  rooms: [],
   currentCategory: 'すべて',
   pendingAction: null,
   pendingJoinRoomId: null,
@@ -201,6 +115,7 @@ function renderRooms() {
     const tags = [];
     if (room.song) tags.push(`<span class="room-tag music">🎵 ${escapeHtml(room.song)}</span>`);
     if (room.capacity) tags.push(`<span class="room-tag capacity">${escapeHtml(formatCapacity(room.capacity))}</span>`);
+    if (room.members) tags.push(`<span class="room-tag members">👥 ${escapeHtml(room.members.length)}/${escapeHtml(room.capacity)}人</span>`);
     if (room.difficulty) tags.push(`<span class="room-tag difficulty">⭐ ${escapeHtml(room.difficulty)}</span>`);
     tags.push(`<span class="room-tag time">⏰ ${escapeHtml(minutesAgoText(room.time))}</span>`);
 
@@ -216,7 +131,19 @@ function renderRooms() {
             </div>
             <div class="room-game">${escapeHtml(room.game)}</div>
             <div class="room-title">${escapeHtml(room.category)}</div>
-            ${room.comment ? `<p class="room-comment">${escapeHtml(room.comment)}</p>` : ''}
+            ${room.comment ? `<p class="room-comment"><strong>コメント:</strong> ${escapeHtml(room.comment)}</p>` : ''}
+            ${room.members && room.members.length > 0 ? `
+            <div class="room-members-info">
+              <div class="members-title">入室中のメンバー</div>
+              ${room.members.map(member => `
+                <div class="member-preview">
+                  <span class="member-name">${escapeHtml(member.name)}</span>
+                  <span class="member-level">⭐ ${escapeHtml(member.level)}</span>
+                  <span class="member-stay">滞在: ${escapeHtml(member.stay)}分</span>
+                </div>
+              `).join('')}
+            </div>
+            ` : '<div class="room-members-info"><div class="members-title">入室中のメンバーはいません</div></div>'}
             <div class="room-tags">
               ${tags.join('')}
             </div>
@@ -341,7 +268,10 @@ function openJoinModal(roomId) {
 
   if (gameEl) gameEl.textContent = room.game;
   if (idEl) idEl.textContent = room.id;
-  if (commentEl) commentEl.textContent = room.comment || '特記なし';
+  if (commentEl) {
+  const textEl = commentEl.querySelector('#join-comment-text') || commentEl;
+  textEl.textContent = room.comment || '特記なし';
+}
   if (detailEl) detailEl.textContent = getRoomDetails(room) || '特記なし';
 
   const difficulty = $('#difficulty-select');
@@ -412,11 +342,17 @@ function createRoomFromForm(form) {
     participationCode: generateParticipationCode(),
   };
 }
-
 async function handleCreateRoom(event) {
   event.preventDefault();
 
   const form = event.currentTarget;
+
+  const holoPassword = $('#holodori-password', form)?.value.trim();
+  if (!holoPassword) {
+    alert('ホロドリのパスワードは必須です');
+    return;
+  }
+
   const room = createRoomFromForm(form);
 
   try {
@@ -436,7 +372,10 @@ async function handleCreateRoom(event) {
     const createdRoom = data.room || room;
 
     state.currentRoomId = createdRoom.id;
-    state.currentNickname = createdRoom.members?.[0]?.name || room.members?.[0]?.name || '';
+    state.currentNickname =
+      createdRoom.members?.[0]?.name ||
+      room.members?.[0]?.name ||
+      '';
 
     $('#create-modal')?.classList.remove('active');
     form.reset();
@@ -444,7 +383,10 @@ async function handleCreateRoom(event) {
 
     await loadRooms();
 
-    openChatModal(state.currentRoomId, state.currentNickname);
+    openChatModal(
+      state.currentRoomId,
+      state.currentNickname
+    );
   } catch (error) {
     console.error('部屋作成エラー:', error);
     alert('部屋を作成できませんでした');
@@ -598,7 +540,7 @@ function decreaseCapacity(e) {
   const input = $('#capacity-display');
   if (!input) return;
   const value = parseInt(input.value, 10);
-  if (value > 1) input.value = String(value - 1);
+  if (value > 2) input.value = String(value - 1);  // 1 → 2 に変更
 }
 
 function updateGameFields() {
@@ -643,29 +585,18 @@ function setLanguage(lang, btn) {
 
 function handleEscKey(event) {
   if (event.key !== 'Escape') return;
-
-  if ($('#confirmation-modal')?.classList.contains('active')) {
-    cancelConfirmation();
-    return;
-  }
-
-  if ($('#consent-modal')?.classList.contains('active')) {
-    return;
-  }
+  if ($('#consent-modal')?.classList.contains('active')) return;
 
   const activeModals = $all('.modal-overlay.active');
   if (activeModals.length === 0) return;
 
   const topModal = activeModals[activeModals.length - 1];
-  if (topModal.id === 'chat-modal') {
-    closeModal('chat-modal');
-  } else if (topModal.id === 'create-modal') {
-    closeModal('create-modal');
-  } else if (topModal.id === 'join-modal') {
-    closeModal('join-modal');
-  } else {
-    topModal.classList.remove('active');
+  if (topModal.id === 'confirmation-modal') {
+    cancelConfirmation();
+    return;
   }
+
+  closeModal(topModal.id);
 }
 
 function handleOverlayClick(event) {
@@ -700,23 +631,24 @@ async function loadRooms() {
 
 
 
+let syncIntervalId = null;
 
-
-document.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('darkMode') === 'true') {
-    document.body.classList.add('dark-mode');
-  }
-
-  syncLanguageButtons();
-  loadRooms();
-
-  if (localStorage.getItem('consentAccepted') !== 'true') {
-    showConsentModal();
-  }
-
-  document.querySelectorAll('.modal-overlay').forEach((overlay) => {
-    overlay.addEventListener('click', handleOverlayClick);
-  });
-
-  document.addEventListener('keydown', handleEscKey);
-});
+function startAutoSync() {
+  // 30秒ごとにリアルタイム同期
+  if (syncIntervalId) clearInterval(syncIntervalId);
+  
+  syncIntervalId = setInterval(async () => {
+    try {
+      await loadRooms();
+      // 現在チャットを開いている場合、参加メンバーも更新
+      if (state.currentRoomId) {
+        const room = state.rooms.find(r => r.id === state.currentRoomId);
+        if (room) {
+          renderMemberList(room);
+        }
+      }
+    } catch (error) {
+      console.error('同期エラー:', error);
+    }
+  }, 10000); // 30秒間隔
+}

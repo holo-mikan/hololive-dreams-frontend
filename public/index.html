@@ -13,21 +13,19 @@
       <div class="header-inner">
         <div class="header-left">
           <a href="#" class="header-logo">
-            <div class="logo-icon"></div>
-            <span>hololive Dreams</span>
-          </a>
+  <div class="logo-icon"></div>
+  <span>hololive Dreams(非公式)</span>
+</a>
+
           <div class="header-stats">
-            <div class="stat-item">👥 <span class="stat-number" id="stat-users">38</span> 人利用中</div>
-            <div class="stat-item">🎮 <span class="stat-number" id="stat-rooms">12</span> 部屋募集中</div>
-            <div class="stat-item">🙋 <span class="stat-number" id="stat-access">3401</span> 歴代アクセス</div>
+            <div class="stat-item">👥 <span class="stat-number" id="stat-users">0</span> 人利用中</div>
+<div class="stat-item">🎮 <span class="stat-number" id="stat-rooms">0</span> 部屋募集中</div>
+<div class="stat-item">🙋 <span class="stat-number" id="stat-access">3401</span> 歴代アクセス</div>
           </div>
         </div>
+
         <div class="header-nav">
           <button type="button" class="nav-btn" onclick="scrollToAbout()">募集</button>
-          <div class="lang-buttons">
-            <button type="button" class="lang-btn active" onclick="setLanguage('JP', this)">JP</button>
-            <button type="button" class="lang-btn" onclick="setLanguage('EN', this)">EN</button>
-          </div>
           <button type="button" class="theme-toggle" onclick="toggleDarkMode()" title="ダークモード">🌙</button>
         </div>
       </div>
@@ -37,7 +35,9 @@
     <div class="container">
       <!-- Room Matching Header -->
       <div style="margin-bottom: 2rem; padding: 1.5rem 0; text-align: center;">
-        <h1 class="page-title" style="font-size: 2.5rem; margin-bottom: 0.5rem;">Room Matching</h1>
+        <h1 class="page-title" style="font-size: clamp(1.6rem, 5vw, 2.5rem); margin-top: 2rem; margin-bottom: 0.5rem;">
+  Room Matching
+</h1>
         <p class="page-subtitle">好みの募集を見つけて、一緒にhololive Dreamsを楽しもう</p>
       </div>
 
@@ -119,11 +119,15 @@
 
     <!-- Footer -->
     <div class="footer">
-      <div class="footer-inner">
-        <p>&copy; 2024 hololive Dreams Community Tool. All rights reserved.</p>
-      </div>
-    </div>
+  <div class="footer-inner">
+    <p style="font-size: 0.875rem; line-height: 1.6;">
+      &copy; 2024 hololive Dreams Community Tool. All rights reserved.<br>
+      <strong>当サイトは「hololive Dreams」の非公式ファンサイトです。</strong><br>
+      COVER株式会社および株式会社QualiArtsとは関係ありません。<br>
+      ゲーム、楽曲、出演タレント等の権利は各権利者に帰属します。© COVER / © QualiArts, Inc.
+    </p>
   </div>
+</div>
 
   <!-- Consent Modal -->
   <div class="consent-overlay" id="consent-modal">
@@ -211,7 +215,7 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">ホロドリのパスワード（任意）</label>
+            <label class="form-label">ホロドリのパスワード <span class="required">*</span></label>
             <input type="text" id="holodori-password" class="form-input" placeholder="ゲーム内のパスワードを入力">
           </div>
 
@@ -255,7 +259,7 @@
             <label class="form-label">募集人数</label>
             <div class="capacity-counter">
               <button type="button" class="counter-btn" onclick="decreaseCapacity(event)">−</button>
-              <input type="number" id="capacity-display" value="1" readonly min="1" max="5" class="capacity-input">
+              <input type="number" id="capacity-display" value="2" readonly min="2" max="5" class="capacity-input">
               <button type="button" class="counter-btn" onclick="increaseCapacity(event)">+</button>
             </div>
           </div>
@@ -297,11 +301,16 @@
             <label class="form-label">部屋ID</label>
             <div class="form-input" id="join-room-id" style="background: var(--blue-10); display: flex; align-items: center; font-family: monospace; font-weight: 600;"></div>
           </div>
-
           <div class="form-group">
-            <label class="form-label">コメント</label>
-            <div class="form-input" id="join-comment" style="background: var(--blue-10); display: flex; align-items: center;"></div>
-          </div>
+  <label class="form-label">ルームパスワード</label>
+  <input type="text" id="join-password" class="form-input" placeholder="数字4桁" maxlength="4" pattern="[0-9]*">
+</div>
+          <div class="form-group">
+  <label class="form-label">コメント</label>
+  <div class="form-input" id="join-comment" style="background: var(--blue-10); display: flex; align-items: center;">
+    <span style="font-weight: bold; color: var(--gray-50); margin-right: 0.5rem;">コメント:</span><span id="join-comment-text"></span>
+  </div>
+</div>
 
           <div class="form-group">
             <label class="form-label">詳細情報</label>
@@ -354,7 +363,7 @@
       <div class="modal-body">
         <div class="room-info-title">ホロドリ参加コード　ゲームに貼り付けてください</div>
         <div class="room-code-input-group">
-          <input type="text" class="room-code-input" id="participation-code" value="12345678" readonly>
+          <input type="text" class="room-code-input" id="participation-code" value="" readonly>
           <button type="button" class="room-code-btn" onclick="copyParticipationCode()">コピー</button>
         </div>
 
