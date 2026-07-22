@@ -652,3 +652,12 @@ function startAutoSync() {
     }
   }, 10000); // 30秒間隔
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    await loadRooms();
+    startAutoSync();
+  } catch (error) {
+    console.error('初期読み込みエラー:', error);
+  }
+});
