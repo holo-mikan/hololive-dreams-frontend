@@ -1,0 +1,15 @@
+name = "hololive-dreams"
+main = "src/index.js"
+compatibility_date = "2026-07-21"
+
+# 静的ファイルホスティング
+[build]
+command = ""
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hololive_dreams"
+database_id = "34d78a2f-6fc9-4828-bfdb-734fbc617fba"
