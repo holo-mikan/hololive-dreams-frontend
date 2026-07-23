@@ -505,6 +505,39 @@ var worker_default = {
             room
           });
         }
+        if (action === "verify-password" && request.method === "POST") {
+  const body = await parseJson(request);
+
+  const room = await env.DB.prepare(`
+    SELECT id, category, participationCode
+    FROM rooms
+    WHERE id = ?
+    LIMIT 1
+  `).bind(roomId).first();
+
+  if (!room) {
+    return corsJson({ ok: false, error: "Room not found" }, 404);
+  }
+
+  // 鍵なし部屋
+  if (room.category !== "鍵付き部屋") {
+    return corsJson({
+      ok: true,
+      valid: true
+    });
+  }
+
+  const password = cleanText(
+    body.password ?? body.roomPassword,
+    8,
+    ""
+  );
+
+  return corsJson({
+    ok: true,
+    valid: password === room.participationCode
+  });
+}
         if (action === "join" && request.method === "POST") {
           const body = await parseJson(request);
           const room = await joinRoom(env.DB, roomId, body);
