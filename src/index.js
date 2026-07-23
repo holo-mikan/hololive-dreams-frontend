@@ -155,7 +155,6 @@ function roomToDto(roomRow, memberRows, referenceMs = nowMs()) {
     time: minutesSince(roomRow.createdAt, referenceMs),
     members,
     participationCode: roomRow.participationCode,
-    password: roomRow.password || "",
     memberCount: members.length,
     createdAt: Number(roomRow.createdAt),
     updatedAt: Number(roomRow.updatedAt)
@@ -164,8 +163,8 @@ function roomToDto(roomRow, memberRows, referenceMs = nowMs()) {
 __name(roomToDto, "roomToDto");
 async function loadRooms(db) {
   const roomsResult = await db.prepare(`
-    SELECT id, game, gameType, category, roomName, comment, song, capacity, difficulty, participationCode, createdAt, updatedAt
-    FROM rooms
+    SELECT id, game, gameType, category, roomName, comment, song, capacity, difficulty, participationCode, password, createdAt, updatedAt
+FROM rooms
     ORDER BY updatedAt DESC, createdAt DESC
   `).all();
   const membersResult = await db.prepare(`
@@ -181,8 +180,8 @@ async function loadRooms(db) {
 __name(loadRooms, "loadRooms");
 async function loadRoom(db, roomId) {
   const room = await db.prepare(`
-    SELECT id, game, gameType, category, roomName, comment, song, capacity, difficulty, participationCode, createdAt, updatedAt
-    FROM rooms
+    SELECT id, game, gameType, category, roomName, comment, song, capacity, difficulty, participationCode, password, createdAt, updatedAt
+FROM rooms
     WHERE id = ?
     LIMIT 1
   `).bind(roomId).first();
@@ -275,7 +274,7 @@ function normalizeRoomInput(input, db) {
   const capacity = asInt(input.capacity, 1, 1, 5);
   const playerName = cleanText(input.playerName ?? input.name, 20, "\u540D\u7121\u3057\u3055\u3093");
   const stay = asInt(input.time ?? input.stay ?? input.duration, 5, 1, 720);
-  const password = cleanText(input.password ?? input.roomPassword, 8, "");
+  const password = input.password ?? input.roomPassword ?? "";
   const sourceMembers = Array.isArray(input.members) ? input.members : [];
   const members = sourceMembers.length > 0 ? sourceMembers.map((member) => ({
     name: cleanText(member?.name, 20, "\u540D\u7121\u3057\u3055\u3093"),
@@ -306,7 +305,7 @@ async function createRoom(db, body) {
   const id = normalized.id && !await isRoomIdTaken(db, normalized.id) ? normalized.id : await generateUniqueRoomId(db);
   const participationCode = normalized.participationCode && !await isParticipationCodeTaken(db, normalized.participationCode) ? normalized.participationCode : await generateUniqueParticipationCode(db);
   const createdAt = nowMs();
-  const roomPassword = cleanText(input.password ?? input["holodori-password"], 8, "");
+  const roomPassword = input.password ?? input["holodori-password"] ?? "";
   await db.prepare(`
     INSERT INTO rooms (
       id, game, gameType, category, roomName, comment, song, capacity, difficulty,
@@ -357,7 +356,7 @@ async function joinRoom(db, roomId, body) {
   // 鍵付き部屋のパスワード検証
   if (roomRow.password) {
     const input = body?.member && typeof body.member === "object" ? body.member : body;
-    const inputPassword = cleanText(input.password, 8, "");
+    const inputPassword = input.password ?? "";
     if (inputPassword !== roomRow.password) {
       const error = new Error("Invalid password");
       error.status = 401;
@@ -509,11 +508,11 @@ var worker_default = {
   const body = await parseJson(request);
 
   const room = await env.DB.prepare(`
-    SELECT id, category, participationCode
-    FROM rooms
-    WHERE id = ?
-    LIMIT 1
-  `).bind(roomId).first();
+  SELECT id, category, password
+  FROM rooms
+  WHERE id = ?
+  LIMIT 1
+`).bind(roomId).first();
 
   if (!room) {
     return corsJson({ ok: false, error: "Room not found" }, 404);
@@ -527,16 +526,13 @@ var worker_default = {
     });
   }
 
-  const password = cleanText(
-    body.password ?? body.roomPassword,
-    8,
-    ""
-  );
+  const password = body.password ?? body.roomPassword ?? "";
 
-  return corsJson({
-    ok: true,
-    valid: password === room.participationCode
-  });
+
+return corsJson({
+  ok: true,
+  valid: password === room.password
+});
 }
         if (action === "join" && request.method === "POST") {
           const body = await parseJson(request);

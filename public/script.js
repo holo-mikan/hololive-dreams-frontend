@@ -323,7 +323,7 @@ function createRoomFromForm(form) {
   const gameType = $('#game-select', form)?.value || '';
   const roomName = $('#room-name', form)?.value.trim() || '';
   const song = $('#room-song', form)?.value.trim() || '';
-  const password = $('#room-password', form)?.value.trim() || '';
+  const password = $('#holodori-password', form)?.value.trim() || '';
   const category = $('#category-select', form)?.value || 'その他';
   const level = $('#room-level', form)?.value || '中級者';
   const duration = Number($('#room-duration', form)?.value || '120');
@@ -345,7 +345,7 @@ function createRoomFromForm(form) {
     time: 0,
     members: [{ name: playerName, level, stay: duration }],
     participationCode: generateParticipationCode(),
-    password: password ? btoa(password) : null,
+    password: password || null,
   };
 }
 async function handleCreateRoom(event) {
