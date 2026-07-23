@@ -1,0 +1,71 @@
+[33mcommit 5bcda5b44d5ee5f02f2ca60ba2bb302903765ddc[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: ホロみかん <maple.live12201484@gmail.com>
+Date:   Thu Jul 23 10:39:48 2026 +0900
+
+    パスワード処理修正
+
+[33mcommit fb6047381c4b59fc9edcc411e104be48249af03e[m
+Author: ホロみかん <maple.live12201484@gmail.com>
+Date:   Thu Jul 23 09:49:22 2026 +0900
+
+    Add room password verification API
+
+[33mcommit 8d13852f2123981e24b7e25a91142c00d8241807[m
+Author: ホロみかん <maple.live12201484@gmail.com>
+Date:   Thu Jul 23 09:35:29 2026 +0900
+
+    Update API endpoint to new Worker
+
+[33mcommit 7dff802c4ae1f89c737ad2b29eba6c664ca9f4ff[m
+Author: ホロみかん <maple.live12201484@gmail.com>
+Date:   Thu Jul 23 09:25:23 2026 +0900
+
+    restore backend database config
+
+[33mcommit 26f6140e50bc7c5abfb9edf99deb99e4e4fe394f[m
+Author: ホロみかん <maple.live12201484@gmail.com>
+Date:   Thu Jul 23 08:52:04 2026 +0900
+
+    変更内容
+
+[33mcommit 8203d27295d69566ddf41966e8e5ede568d785f7[m
+Author: ホロみかん <maple.live12201484@gmail.com>
+Date:   Thu Jul 23 03:21:06 2026 +0900
+
+    update
+
+[33mcommit 97221e2ffe1686077aa3fab682434e11b8ec0b2f[m
+Author: ホロみかん <maple.live12201484@gmail.com>
+Date:   Thu Jul 23 03:10:13 2026 +0900
+
+    update
+
+[33mcommit bf1ff3cc10a95facd7390865dc6c745a92d63532[m
+Author: ホロみかん <maple.live12201484@gmail.com>
+Date:   Wed Jul 22 14:46:19 2026 +0900
+
+    Fix API_BASE URL - remove trailing slash
+
+[33mcommit e7e3eec6f92ee75cf14bb2446c658307dd44ef4c[m
+Author: ホロみかん <maple.live12201484@gmail.com>
+Date:   Wed Jul 22 13:38:14 2026 +0900
+
+    Remove wrangler.toml - use Pages only for frontend
+
+[33mcommit 04a7099ed8f4546c0cb28b3d3d17f443523b0b2a[m
+Author: ホロみかん <maple.live12201484@gmail.com>
+Date:   Wed Jul 22 13:36:41 2026 +0900
+
+    Replace src/index.js with clean worker.js
+
+[33mcommit 06cd15ce4e7877e5dd3604e37b9a067eebfccf45[m
+Author: ホロみかん <maple.live12201484@gmail.com>
+Date:   Wed Jul 22 13:26:48 2026 +0900
+
+    Fix wrangler.toml format
+
+[33mcommit 6c867fab28989f6dd46ae938b38505bdb934f409[m
+Author: ホロみかん <maple.live12201484@gmail.com>
+Date:   Wed Jul 22 12:35:41 2026 +0900
+
+    Initial commit: Hololive Dreams Frontend
